@@ -1,0 +1,17 @@
+#!/usr/bin/python3
+from scapy.all import *
+
+def spoofing(pkt):
+	if (pkt[ICMP].type != 8):
+		return
+	ip = IP(src = pkt[IP].dst, dst = pkt[IP].src)
+	icmp = ICMP(type =0, seq = pkt[ICMP].seq, id = pkt[ICMP].id)
+	
+	spoofedpkt = ip/icmp
+	send(spoofedpkt, verbose = 0)
+	print("Sent spoofed packet\n")
+
+
+while(True):
+	pkt = sniff(iface = 'br-acd6f53cd73f', filter = 'icmp', prn = spoofing)
+
